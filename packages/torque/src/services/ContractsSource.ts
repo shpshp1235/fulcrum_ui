@@ -15,6 +15,8 @@ import { saiToDAIBridgeContract } from "../contracts/saiToDaiBridge";
 import { instaRegistryContract } from "../contracts/instaRegistry";
 
 import { Asset } from "../domain/Asset";
+import {soloBridgeContract} from "../contracts/soloBridge";
+import {soloMarginContract} from "../contracts/soloMargin";
 
 const ethNetwork = process.env.REACT_APP_ETH_NETWORK;
 
@@ -39,6 +41,8 @@ export class ContractsSource {
   public networkId: number;
   public canWrite: boolean;
   public saiToDAIBridgeJson: any;
+  private soloBridgeJson: any;
+  private soloMarginJson: any;
   public instaRegistryeJson: any;
 
   public constructor(provider: any, networkId: number, canWrite: boolean) {
@@ -368,6 +372,8 @@ export class ContractsSource {
     this.dsProxyIsAllowJson = await import(`./../assets/artifacts/${network}/dsProxyIsAllow.json`);
     this.saiToDAIBridgeJson = await import(`./../assets/artifacts/${network}/saiToDAIBridge.json`);
     this.instaRegistryeJson = await import(`./../assets/artifacts/${network}/instaRegistry.json`);
+    this.soloBridgeJson = await import(`./../assets/artifacts/${network}/soloBridge.json`);
+    this.soloMarginJson = await import(`./../assets/artifacts/${network}/soloMargin.json`);
     ContractsSource.isInit = true;
   }
 
@@ -407,6 +413,14 @@ export class ContractsSource {
     await this.Init();
     return new instaRegistryContract(this.instaRegistryeJson.abi, address.toLowerCase(), this.provider);
   }
+  private async getSoloBridgeRaw(address: string): Promise<soloBridgeContract> {
+    await this.Init();
+    return new soloBridgeContract(this.soloBridgeJson.abi, address.toLowerCase(), this.provider);
+  }
+  private async getSoloMarginRaw(address: string): Promise<soloMarginContract> {
+    await this.Init();
+    return new soloMarginContract(this.soloMarginJson.abi, address.toLowerCase(), this.provider);
+  }
   private async getDsProxyAllowJSON(){
     return this.dsProxyIsAllowJson;
   }
@@ -420,6 +434,8 @@ export class ContractsSource {
 
   public getProxyMigration = _.memoize(this.getProxyMigrationJSON);
   public dsProxyAllowJson = _.memoize(this.getDsProxyAllowJSON);
+  public getSoloBridge = _.memoize(this.getSoloBridgeRaw);
+  public getSoloMargin = _.memoize(this.getSoloMarginRaw);
   public getInstaRegistry = _.memoize(this.getInstaRegistryRaw);
   public getSaitoDaiBridge = _.memoize(this.getSaitoDaiBridgeRaw);
   public getProxyRegistery = _.memoize(this.getProxyRegisteryRaw);

@@ -22,3 +22,15 @@ export interface RefinanceCdpData {
   isProxy: boolean;
   proxyAddress:string;
 }
+
+export interface RefinanceCompoundData {
+  collateralAsset: Asset;
+  collateralAmount: BigNumber;
+  loanAsset: Asset;
+  loanAmount:  BigNumber;
+  variableAPR:BigNumber;
+  isDisabled: boolean;
+  isShowCard:boolean;
+  collateralization:number;
+}
+

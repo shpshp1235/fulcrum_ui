@@ -1,7 +1,12 @@
 import React, { Component } from "react";
 import { Asset } from "../domain/Asset";
+import { BigNumber } from "@0x/utils";
 import { WalletType } from "../domain/WalletType";
 import { RefinanceAssetCompoundSelectorItem } from "./RefinanceAssetCompoundSelectorItem";
+import {TorqueProvider} from "../services/TorqueProvider";
+import {TorqueProviderEvents} from "../services/events/TorqueProviderEvents";
+import {RefinanceCompoundData} from "../domain/RefinanceData";
+
 
 export interface IRefinanceAssetCompoundSelectorProps {
   walletType: WalletType
@@ -9,74 +14,94 @@ export interface IRefinanceAssetCompoundSelectorProps {
   onSelectAsset?: (asset: Asset) => void;
 }
 
-export class RefinanceAssetCompoundSelector extends Component<IRefinanceAssetCompoundSelectorProps> {
+interface IRefinanceCompoundSelectorItemState {
+  asset:Asset,
+  refinanceCompoundData: RefinanceCompoundData[];
+}
 
+export class RefinanceAssetCompoundSelector extends Component<IRefinanceAssetCompoundSelectorProps, IRefinanceCompoundSelectorItemState> {
+  constructor(props: IRefinanceAssetCompoundSelectorProps) {
+    super(props);
+    this.state = {
+      asset: Asset.DAI,
+      refinanceCompoundData:
+      [{
+        collateralAsset:Asset.DAI,
+        collateralAmount: new BigNumber(0),
+        loanAsset:Asset.DAI,
+        loanAmount:  new BigNumber(0),
+        variableAPR: new BigNumber(0),
+        isDisabled: false,
+        isShowCard:false,
+        collateralization:0
+      }]
+    };
+    // console.log("this.state=  "+this.state)
+    TorqueProvider.Instance.eventEmitter.on(TorqueProviderEvents.ProviderAvailable, this.onProviderAvailable);
+
+  }
   // true includes ENS support
-  private readonly assetsShown: Map<Asset, boolean> = new Map<Asset, boolean>([
-    // [
-    //   Asset.DAI,
-    //   true
-    // ],
+  private onProviderAvailable = () => {
 
-    [
-      Asset.USDC,
-      true
-    ],
-    [
-      Asset.SAI,
-      false
-    ],
-    /*[
-      Asset.SUSD,
-      false
-    ],*/
-    // [
-    //   Asset.ETH,
-    //   false
-    // ],
-    // [
-    //   Asset.WBTC,
-    //   false
-    // ],
-    // [
-    //   Asset.LINK,
-    //   false
-    // ],
-    // [
-    //   Asset.ZRX,
-    //   false
-    // ],
-    // [
-    //   Asset.REP,
-    //   false
-    // ],
-    // [
-    //   Asset.KNC,
-    //   false
-    // ],
-  ]);
+    this.derivedUpdate();
+  };
+
+  public componentDidMount(): void {
+    this.derivedUpdate();
+  }
+  private derivedUpdate = async () => {
+    const refinanceCompoundData = await TorqueProvider.Instance.checkSoloMargin();
+    this.setState({ ...this.state, refinanceCompoundData: refinanceCompoundData });
+
+  };
 
 
   public render() {
 
-    let assetList = Array.from(this.assetsShown.keys());
+    // let assetList = Array.from(this.assetsShown.keys());
+    let refinanceCompound = this.state.refinanceCompoundData
     let items;
     if (this.props.walletType === WalletType.Web3) {
-      items = assetList.map(e => {
-        return (
+      if(refinanceCompound[0].collateralAmount.gt(0)) {
+      items = refinanceCompound.map((e, index)  => {
 
-          <RefinanceAssetCompoundSelectorItem key={e} asset={e}  />
-        );
+          return (
+
+            <RefinanceAssetCompoundSelectorItem key={index} collateralAsset={refinanceCompound[index].collateralAsset}
+                                                collateralAmount={refinanceCompound[index].collateralAmount}
+                                                loanAsset={refinanceCompound[index].loanAsset}
+                                                variableAPR={refinanceCompound[index].variableAPR}
+                                                isDisabled={refinanceCompound[index].isDisabled}
+                                                isShowCard={refinanceCompound[index].isShowCard}
+                                                collateralization={refinanceCompound[index].collateralization}
+                                                loanAmount={refinanceCompound[index].loanAmount}/>
+          );
+
       });
+      }
     } else {
-      assetList = assetList.sort(e => this.assetsShown.get(e) ? -1 : 1);
-      items = assetList.map(e => {
-        return (
-          <RefinanceAssetCompoundSelectorItem key={e} asset={e} onSelectAsset={this.assetsShown.get(e) ? this.props.onSelectAsset : undefined} />
-        );
-      });
-    }
+      // assetList = assetList.sort(e => this.assetsShown.get(e) ? -1 : 1);
+      if(refinanceCompound[0].collateralAmount.gt(0)) {
+        items = refinanceCompound.map((e, index) => {
 
-    return <div className="refinance-asset-selector">{items}</div>;
+          return (
+            <RefinanceAssetCompoundSelectorItem key={index} collateralAsset={refinanceCompound[index].collateralAsset}
+                                                collateralAmount={refinanceCompound[index].collateralAmount}
+                                                loanAsset={refinanceCompound[index].loanAsset}
+                                                variableAPR={refinanceCompound[index].variableAPR}
+                                                isDisabled={refinanceCompound[index].isDisabled}
+                                                isShowCard={refinanceCompound[index].isShowCard}
+                                                collateralization={refinanceCompound[index].collateralization}
+                                                loanAmount={refinanceCompound[index].loanAmount}/>
+          );
+
+        });
+      }
+    }
+    if(refinanceCompound[0].collateralAmount.gt(0)) {
+      return <div className="refinance-asset-selector">{items}</div>;
+    }else{
+      return <div></div>
+    }
   }
 }
