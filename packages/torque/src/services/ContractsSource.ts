@@ -463,9 +463,9 @@ export class ContractsSource {
   }
 
   public async Init() {
-    if (ContractsSource.isInit) {
-      return;
-    }
+    // if (ContractsSource.isInit) {
+    //   return;
+    // }
     const network = ethNetwork || "1";
     this.erc20Json = await import(`./../assets/artifacts/${network}/erc20.json`);
     this.cdpsJson = await import(`./../assets/artifacts/${network}/GetCdps.json`);
