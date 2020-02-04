@@ -758,7 +758,7 @@ export class TorqueProvider {
         accountAddress: accountAddress,
         proxyAddress:proxyAddress,
         isProxy: isProxy,
-        isDisabled: isDisabled,
+        isDisabled: true,
         isShowCard:isShowCard,
         variableAPR:rateAmountIlkYr,
       }]
@@ -775,8 +775,13 @@ export class TorqueProvider {
 
       let tokenCdpManagerContract: cdpManagerContract | null = null;
       tokenCdpManagerContract = await this.contractsSource.getCdpManager(cdpManagerAddress)
+
+      let amountRemain = parseInt(refRequest.debt.dp(3, BigNumber.ROUND_FLOOR).toString())/parseInt(loanAmount.dp(3, BigNumber.ROUND_FLOOR).toString())
+      console.log("amountRemain = ",amountRemain)
+      let collateralAmount = parseFloat(refRequest.collateralAmount.dp(3, BigNumber.ROUND_FLOOR).toString()) / amountRemain
+      console.log("collateralAmount = ",collateralAmount )
       let darts = web3.utils.toWei(loanAmount.dp(3, BigNumber.ROUND_FLOOR).toString()); //loanAmount.toFixed().toString()
-      let dinks = web3.utils.toWei(refRequest.collateralAmount.dp(3, BigNumber.ROUND_FLOOR).toString());
+      let dinks = web3.utils.toWei(collateralAmount.toString());
 
 
       let tokendsProxyContract: dsProxyJsonContract | null = null;
@@ -994,7 +999,7 @@ export class TorqueProvider {
       collateralization:0
       }]
     if (this.web3Wrapper && this.contractsSource) {
-      let account = this.accounts.length > 0 && this.accounts[0] ? this.accounts[0].toLowerCase() : '';
+      let account = "0xdf2db45ed0df076e5d6d302b416a5971ff5ad61f"//this.accounts.length > 0 && this.accounts[0] ? this.accounts[0].toLowerCase() : '';
       console.log("account = ",account)
       console.log("process.env.REACT_APP_ETH_NETWORK = ",process.env.REACT_APP_ETH_NETWORK)
       // 0x4EC3570cADaAEE08Ae384779B0f3A45EF85289DE
@@ -1225,7 +1230,10 @@ export class TorqueProvider {
       if(respAccountValue.length>1){
         let suppliedValue = respAccountValue[0].value.dividedBy(10 ** 26)
         let borrowedValue = respAccountValue[1].value.dividedBy(10 ** 18)
-        const collateralization = parseFloat(respAccountValue[0].value.dividedBy(respAccountValue[1].value).dividedBy(10 ** 13).dp(2, BigNumber.ROUND_FLOOR).toString())
+        // const collateralization = parseFloat(respAccountValue[0].value.dividedBy(respAccountValue[1].value).dividedBy(10 ** 13).dp(2, BigNumber.ROUND_FLOOR).toString())
+        let collateralization = parseFloat(suppliedValue.dp(2, BigNumber.ROUND_FLOOR).toString()) / parseFloat(borrowedValue.dp(2, BigNumber.ROUND_FLOOR).toString())
+        collateralization= parseFloat(collateralization.toFixed(2))
+        console.log("collateralization1 = ",collateralization)
         dataItems[0].collateralization = collateralization
         if(dataItems.length>1){
           dataItems[1].collateralization = collateralization
@@ -1235,6 +1243,31 @@ export class TorqueProvider {
     }
 
     return dataItems
+  }
+
+  public checkSoloMarginOperaters = async (RefinanceCompoundData:any, loanAmount:BigNumber)=> {
+    if (this.web3Wrapper && this.contractsSource) {
+      let account =this.accounts.length > 0 && this.accounts[0] ? this.accounts[0].toLowerCase() : '';
+      console.log("axccount = ",account)
+      console.log("process.env.REACT_APP_ETH_NETWORK = ",process.env.REACT_APP_ETH_NETWORK)
+      // 0x4EC3570cADaAEE08Ae384779B0f3A45EF85289DE
+      let soloMarginContract = await this.contractsSource.getSoloMargin("0x4EC3570cADaAEE08Ae384779B0f3A45EF85289DE")
+      // let n = unit(0)
+      let respSetOperators = await soloMarginContract.setOperators.sendTransactionAsync([{operator: account,trusted: true}],{from: account})
+      // console.log("respSetOperators = ",respSetOperators)
+      let marketId= new BigNumber(0)
+      let marketIds = [new BigNumber(0)]
+      let loanAmount = RefinanceCompoundData.loanAmount
+      let amounts = [RefinanceCompoundData.collateralAmount]
+      if(RefinanceCompoundData.loanAsset==Asset.DAI){
+        marketId=new BigNumber(1)
+      }else if(RefinanceCompoundData.loanAsset==Asset.USDC){
+        marketId=new BigNumber(2)
+      }
+
+      const soloBridgeContract = await this.contractsSource.getSoloBridge("0xD700670F7C8A2dC9fdfc40c9c0703c4eE3C7cacd")
+      const respBridgeMigration = await soloBridgeContract.migrateLoan.callAsync({owner: account, number: new BigNumber(0)}, marketId, loanAmount, marketIds, amounts, amounts, loanAmount )
+    }
   }
 
   public createAwaitingLoan = () => {

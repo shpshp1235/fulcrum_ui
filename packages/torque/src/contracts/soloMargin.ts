@@ -1091,7 +1091,7 @@ export class soloMarginContract extends BaseContract {
             txData: Partial<TxData> = {},
         ): Promise<string> {
             const self = this as any as soloMarginContract;
-            const encodedData = self._strictEncodeArguments('setOperators(tuple[])', [args
+            const encodedData = self._strictEncodeArguments('setOperators((address,bool)[])', [args
     ]);
             const txDataWithDefaults = await BaseContract._applyDefaultsToTxDataAsync(
                 {
@@ -1113,7 +1113,7 @@ export class soloMarginContract extends BaseContract {
             txData: Partial<TxData> = {},
         ): Promise<number> {
             const self = this as any as soloMarginContract;
-            const encodedData = self._strictEncodeArguments('setOperators(tuple[])', [args
+            const encodedData = self._strictEncodeArguments('setOperators((address,bool)[])', [args
     ]);
             const txDataWithDefaults = await BaseContract._applyDefaultsToTxDataAsync(
                 {
@@ -1130,7 +1130,7 @@ export class soloMarginContract extends BaseContract {
             args: Array<{operator: string;trusted: boolean}>,
         ): string {
             const self = this as any as soloMarginContract;
-            const abiEncodedTransactionData = self._strictEncodeArguments('setOperators(tuple[])', [args
+            const abiEncodedTransactionData = self._strictEncodeArguments('setOperators((address,bool)[])', [args
     ]);
             return abiEncodedTransactionData;
         },
@@ -1141,7 +1141,7 @@ export class soloMarginContract extends BaseContract {
         ): Promise<void
         > {
             const self = this as any as soloMarginContract;
-            const encodedData = self._strictEncodeArguments('setOperators(tuple[])', [args
+            const encodedData = self._strictEncodeArguments('setOperators((address,bool)[])', [args
         ]);
             const callDataWithDefaults = await BaseContract._applyDefaultsToTxDataAsync(
                 {
@@ -1153,7 +1153,7 @@ export class soloMarginContract extends BaseContract {
             );
             const rawCallResult = await self._web3Wrapper.callAsync(callDataWithDefaults, defaultBlock);
             BaseContract._throwIfRevertWithReasonCallResult(rawCallResult);
-            const abiEncoder = self._lookupAbiEncoder('setOperators(tuple[])');
+            const abiEncoder = self._lookupAbiEncoder('setOperators((address,bool)[])');
             // tslint:disable boolean-naming
             const result = abiEncoder.strictDecodeReturnValue<void
         >(rawCallResult);
