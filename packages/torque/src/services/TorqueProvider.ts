@@ -521,17 +521,17 @@ export class TorqueProvider {
     if (!this.contractsSource) {
       throw new Error("contractsSource is not defined");
     }
-    const iToken = await this.contractsSource.getiTokenContract(asset);
-    // console.log("collateralTokenAddress", collateralTokenAddress);
-    // @ts-ignore
-    const leverageAmount = web3.utils.soliditySha3(
-      { "type": "uint256", "value": new BigNumber(2 * 10 ** 18) },
-      { "type": "address", "value": collateralTokenAddress }
-    );
-    // @ts-ignore
-    const hash = await iToken.loanOrderHashes.callAsync(parseInt(leverageAmount, 10));
-    // console.log("hash", hash);
-    const data = await iToken.loanOrderData.callAsync(hash);
+    // const iToken = await this.contractsSource.getiTokenContract(asset);
+    // // console.log("collateralTokenAddress", collateralTokenAddress);
+    // // @ts-ignore
+    // const leverageAmount = web3.utils.soliditySha3(
+    //   { "type": "uint256", "value": new BigNumber(2 * 10 ** 18) },
+    //   { "type": "address", "value": collateralTokenAddress }
+    // );
+    // // @ts-ignore
+    // const hash = await iToken.loanOrderHashes.callAsync(parseInt(leverageAmount, 10));
+    // // console.log("hash", hash);
+    // const data = await iToken.loanOrderData.callAsync(hash);
     return new BigNumber("150"); // TODO @bshevchenko return data[3];
   };
 
