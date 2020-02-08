@@ -39,7 +39,7 @@ import { IWalletDetails } from "../domain/IWalletDetails";
 import { IWeb3ProviderSettings } from "../domain/IWeb3ProviderSettings";
 import { ManageCollateralRequest } from "../domain/ManageCollateralRequest";
 import { ProviderType } from "../domain/ProviderType";
-import { IRefinanceLoan, IRefinanceToken, RefinanceCdpData, RefinanceData } from "../domain/RefinanceData";
+import { IRefinanceLoan, IRefinanceToken, IRefinanceCdpData, IRefinanceData } from "../domain/IRefinanceData";
 import { RepayLoanRequest } from "../domain/RepayLoanRequest";
 import { SetupENSRequest } from "../domain/SetupENSRequest";
 import { WalletType } from "../domain/WalletType";
@@ -876,8 +876,8 @@ export class TorqueProvider {
     }
   };
 
-  public getMakerLoans = async (): Promise<RefinanceCdpData[]> => {
-    let result: RefinanceCdpData[] = [{
+  public getMakerLoans = async (): Promise<IRefinanceCdpData[]> => {
+    let result: IRefinanceCdpData[] = [{
       cdpId: new BigNumber(0),
       urn: "",
       ilk: "",
@@ -1002,8 +1002,8 @@ export class TorqueProvider {
     return result;
   };
 
-  public getCdpsVat = async (cdpId: BigNumber, urn: string, ilk: string, accountAddress: string, isProxy: boolean, isInstaProxy: boolean, proxyAddress: string, asset: Asset): Promise<RefinanceData[]> => {
-    let result: RefinanceData[] = [{
+  public getCdpsVat = async (cdpId: BigNumber, urn: string, ilk: string, accountAddress: string, isProxy: boolean, isInstaProxy: boolean, proxyAddress: string, asset: Asset): Promise<IRefinanceData[]> => {
+    let result: IRefinanceData[] = [{
       collateralAmount: new BigNumber(0),
       debt: new BigNumber(0),
       collateralType: "",
@@ -1081,7 +1081,7 @@ export class TorqueProvider {
     return result;
   };
 
-  public migrateMakerLoan = async (refRequest: RefinanceData, loanAmount: BigNumber) => {
+  public migrateMakerLoan = async (refRequest: IRefinanceData, loanAmount: BigNumber) => {
 
     const left = refRequest.debt.minus(loanAmount);
     const isDust = !(

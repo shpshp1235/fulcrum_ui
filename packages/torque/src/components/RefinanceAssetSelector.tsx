@@ -1,7 +1,7 @@
 import { BigNumber } from "@0x/utils";
 import React, { Component } from "react";
 import { Asset } from "../domain/Asset";
-import { RefinanceCdpData } from "../domain/RefinanceData";
+import { IRefinanceCdpData } from "../domain/IRefinanceData";
 import { WalletType } from "../domain/WalletType";
 import { TorqueProviderEvents } from "../services/events/TorqueProviderEvents";
 import { TorqueProvider } from "../services/TorqueProvider";
@@ -16,7 +16,7 @@ interface IRefinanceAssetSelectorItemState {
   isLoading: boolean;
   isItems: boolean;
   isShowRecord: boolean;
-  refinanceData: RefinanceCdpData[];
+  refinanceData: IRefinanceCdpData[];
 }
 
 export class RefinanceAssetSelector extends Component<IRefinanceAssetSelectorProps, IRefinanceAssetSelectorItemState> {
@@ -40,50 +40,6 @@ export class RefinanceAssetSelector extends Component<IRefinanceAssetSelectorPro
     };
     TorqueProvider.Instance.eventEmitter.on(TorqueProviderEvents.ProviderAvailable, this.onProviderAvailable);
   }
-
-  // true includes ENS support
-  // private readonly assetsShown: Map<Asset, boolean> = new Map<Asset, boolean>([
-  //   [
-  //     Asset.DAI,
-  //     true
-  //   ]
-  //   // [
-  //   //   Asset.DAI,
-  //   //   false
-  //   // ],
-  //   // [
-  //   //   Asset.USDC,
-  //   //   true
-  //   // ],
-  //   // /*[
-  //   //   Asset.SUSD,
-  //   //   false
-  //   // ],*/
-  //   // [
-  //   //   Asset.ETH,
-  //   //   false
-  //   // ],
-  //   // [
-  //   //   Asset.WBTC,
-  //   //   false
-  //   // ],
-  //   // [
-  //   //   Asset.LINK,
-  //   //   false
-  //   // ],
-  //   // [
-  //   //   Asset.ZRX,
-  //   //   false
-  //   // ],
-  //   // [
-  //   //   Asset.REP,
-  //   //   false
-  //   // ],
-  //   // [
-  //   //   Asset.KNC,
-  //   //   false
-  //   // ],
-  // ]);
 
   private onProviderAvailable = () => {
     // noinspection JSIgnoredPromiseFromCall

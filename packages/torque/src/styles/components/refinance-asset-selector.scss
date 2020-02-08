@@ -7,60 +7,74 @@
   justify-content: space-between;
 
   margin-bottom: 28px;
-  .mb2{
+
+  .mb2 {
     margin-bottom: 28px;
   }
+
   .logo__image {
-      height: 28px;
-      margin: 0.7rem 0;
-      vertical-align: middle;
+    height: 28px;
+    margin: 0.7rem 0;
+    vertical-align: middle;
   }
+
   .logo__imagedydx {
-      height: 3.5rem;
-      //margin: 1.3rem 0;
-      vertical-align: middle;
+    height: 3.5rem;
+    //margin: 1.3rem 0;
+    vertical-align: middle;
   }
+
   .logo__maker {
-      height: 3rem;
-      width: 9rem;
-      vertical-align: middle;
+    height: 3rem;
+    width: 9rem;
+    vertical-align: middle;
   }
-  .refinanace-title-text{
+
+  .refinance-title-text {
     font-size: 15px;
     text-align: left;
     float: left;
     margin-top: 3px;
     color: red;
   }
+
   .logo__dydx {
-      height: 3.5rem;
-      //width: 9rem;
-      vertical-align: middle;
+    height: 3.5rem;
+    //width: 9rem;
+    vertical-align: middle;
   }
-  .asset-collateral-show{
-    display:block;
+
+  .asset-collateral-show {
+    display: block;
   }
-  .asset-collateral-hide{
-    display:none;
+
+  .asset-collateral-hide {
+    display: none;
   }
-  .arrow-icon{
-    width:10px;
+
+  .arrow-icon {
+    width: 10px;
 
   }
-  .cursor-pointer{
+
+  .cursor-pointer {
     cursor: pointer;
   }
-  .arrow-div-down{
+
+  .arrow-div-down {
     width: 27px;
     float: right;
   }
-  .arrow-div-top{
+
+  .arrow-div-top {
     width: 27px;
     float: right;
   }
-  .compoundtxt{
+
+  .compoundtxt {
     font-size: 8px;
   }
+
   .refinance__input-container {
     //padding-bottom: 1rem;
 
@@ -79,13 +93,14 @@
       color: black;
     }
   }
+
   .refinance-page__main-msgCentered {
-      text-align: center;
-      font-size: 2rem;
-      margin: auto;
-      margin-top: 3rem;
-      cursor: pointer;
-    }
+    text-align: center;
+    font-size: 2rem;
+    margin: auto;
+    margin-top: 3rem;
+    cursor: pointer;
+  }
 
   .refinance-details-msg {
     margin-top: 1.5rem;
@@ -107,9 +122,11 @@
       text-align: left;
     }
   }
+
   .refinance-asset-block {
     padding: 28px;
   }
+
   .refinance-asset-selector-item {
     //cursor: pointer;
 
@@ -155,11 +172,11 @@
     .refinance-page__main-centeredOverlay {
       position: fixed;
       background-color: rgba(255, 255, 255, 0.65);
-      top:0;
-      left:0;
-      width:100%;
-      height:100%;
-      color:black;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      color: black;
       text-align: center;
       border-radius: 1rem;
       font-size: 6rem;
@@ -186,7 +203,8 @@
         margin-bottom: 0.8125rem;
       }
     }
-    .refinance-asset-selector__desc{
+
+    .refinance-asset-selector__desc {
       width: 292px;
       color: #758295;
       margin-top: 15px;
@@ -200,14 +218,17 @@
       //margin-bottom: 15px;
 
     }
-    .mt20{
+
+    .mt20 {
       margin-top: 20px;
     }
-    .refinance-asset-selector__simple{
+
+    .refinance-asset-selector__simple {
       //width:18rem;
       float: left;
     }
-    .refinance-asset-selector__txt{
+
+    .refinance-asset-selector__txt {
       float: left;
       margin-right: 5px;
       //width:10%;
@@ -218,7 +239,8 @@
       //text-align: left;
       //float: left;
     }
-    .refinance-asset-selector__rs{
+
+    .refinance-asset-selector__rs {
       //width:10%;
       color: #39e2b5;
       //font-size: .8rem;
@@ -227,166 +249,184 @@
       //text-align: left;
       //float: left;
     }
-    .refinance-asset-selector__loanBlank{
-        font-size: 28px;
-        font-weight: bold;
-        color: black;
-        width:50%;
-        margin-top: 10px;
-        float: left;
-      }
-    .refinance-asset-selector__loan{
-        font-size: 28px;
-        font-weight: bold;
-        color: black;
-        width:38%;
-        margin-top: 10px;
-        float: left;
-      }
-    .refinance-asset-selector__detail{
-        font-size: 1.3rem;
-        font-weight: bold;
-        color: #9589f5;
-        width:40%;
-        margin-top: 10px;
-        float: left;
-      }
+
+    .refinance-asset-selector__loanBlank {
+      font-size: 28px;
+      font-weight: bold;
+      color: black;
+      width: 50%;
+      margin-top: 10px;
+      float: left;
+    }
+
+    .refinance-asset-selector__loan {
+      font-size: 28px;
+      font-weight: bold;
+      color: black;
+      width: 38%;
+      margin-top: 10px;
+      float: left;
+    }
+
+    .refinance-asset-selector__detail {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #9589f5;
+      width: 40%;
+      margin-top: 10px;
+      float: left;
+    }
 
 
-    .refinance-asset-selector__price{
-        font-size: 28px;
-        font-weight: bold;
-        color: black;
-        width:40%;
-        margin-top: 10px;
-        float: left;
-      }
+    .refinance-asset-selector__price {
+      font-size: 28px;
+      font-weight: bold;
+      color: black;
+      width: 40%;
+      margin-top: 10px;
+      float: left;
+    }
+
     .refinance-asset-selector__rowimg {
-          width:100%;
-          color: #758295;
-          float: left;
-          line-height: 45px;
+      width: 100%;
+      color: #758295;
+      float: left;
+      line-height: 45px;
 
 
-        .refinance-asset-selector__apr{
-          font-size: 28px;
-          font-weight: bold;
-          color: #DE4A4A;
-          width:33%;
-          margin-top: 10px;
-          float: left;
-        }
-        .refinance-asset-selector__varapy{
-          font-size: 28px;
-          font-weight: bold;
-          color: #DE4A4A;
-          width:50%;
-          padding-left: 15px;
-          margin-top: 10px;
-          float: left;
-        }
-        .refinance-asset-selector__fixedapy{
-          font-size: 28px;
-          font-weight: bold;
-          color: #39e2b5;
-          width:40%;
-          margin-top: 10px;
-          float: left;
-        }
-        .refinance-asset-selector__img{
-          font-size: 28px;
-          font-weight: bold;
-          float: left;
-          width:33%
-        }
+      .refinance-asset-selector__apr {
+        font-size: 28px;
+        font-weight: bold;
+        color: #DE4A4A;
+        width: 33%;
+        margin-top: 10px;
+        float: left;
+      }
 
+      .refinance-asset-selector__varapy {
+        font-size: 28px;
+        font-weight: bold;
+        color: #DE4A4A;
+        width: 50%;
+        padding-left: 15px;
+        margin-top: 10px;
+        float: left;
+      }
+
+      .refinance-asset-selector__fixedapy {
+        font-size: 28px;
+        font-weight: bold;
+        color: #39e2b5;
+        width: 40%;
+        margin-top: 10px;
+        float: left;
+      }
+
+      .refinance-asset-selector__img {
+        font-size: 28px;
+        font-weight: bold;
+        float: left;
+        width: 33%
+      }
+
+
+    }
+
+    .refinance-asset-selector__row {
+      width: 100%;
+      color: #758295;
+      float: left;
+
+      .right-icon {
+        //width: 30px;
+        ////float: right;
+        //margin-left:15px;
+        //color: #758295;
+        width: 38.5px;
+        //margin-left: 13px;
+        margin-top: 14px;
+
+        color: #758295;
+        float: right;
+        margin-right: 17px;
+      }
+
+      .refinance-asset-selector__marker {
+        font-size: 28px;
+        //font-weight: bold;
+
+        width: 50%;
+        float: left;
+      }
+
+      .refinance-asset-selector__torque {
+        font-size: 1rem;
+        font-weight: bold;
+
+        width: 40%;
+        float: left;
+      }
+
+      .refinance-asset-selector__type {
+        font-size: 1rem;
+        font-weight: bold;
+
+        width: 20%;
+        float: left;
+      }
+
+      .refinance-asset-selector__inputBox {
+        width: 50%;
+        float: left;
+      }
+
+      .refinance-asset-selector__variabletxt {
+        font-size: 1rem;
+        color: #758295;
+        font-weight: normal;
+        padding-left: 15px;
+        width: 50%;
+        float: left;
+      }
+
+      .refinance-asset-selector__loantxt {
+        font-size: 12px;
+        color: #758295;
+        font-weight: normal;
+        width: 100%;
+        float: left;
+      }
+
+      .refinance-asset-selector__imglogo {
+        font-size: 1rem;
+        //font-weight: bold;
+        width: 12%;
+        float: left;
+        margin-top: 7px;
+        text-align: center;
+      }
+
+      .refinance-asset-selector__aprtxt {
+        font-size: 1rem;
+        //font-weight: bold;
+        width: 40%;
+        float: left;
+      }
+
+      .refinance-loan-type__img {
+        width: 40px;
 
       }
 
-      .refinance-asset-selector__row{
-          width:100%;
-          color: #758295;
-          float: left;
-        .right-icon{
-          //width: 30px;
-          ////float: right;
-          //margin-left:15px;
-          //color: #758295;
-          width: 38.5px;
-          //margin-left: 13px;
-          margin-top: 14px;
-
-          color: #758295;
-          float:right;
-          margin-right: 17px;
-        }
-        .refinance-asset-selector__marker{
-          font-size: 28px;
-          //font-weight: bold;
-
-          width:50%;
-          float: left;
-        }
-        .refinance-asset-selector__torque{
-          font-size: 1rem;
-          font-weight: bold;
-
-          width:40%;
-          float: left;
-        }
-        .refinance-asset-selector__type{
-          font-size: 1rem;
-          font-weight: bold;
-
-          width:20%;
-          float: left;
-        }
-        .refinance-asset-selector__inputBox{
-          width:50%;
-          float: left;
-        }
-        .refinance-asset-selector__variabletxt{
-          font-size: 1rem;
-          color: #758295;
-          font-weight: normal;
-          padding-left: 15px;
-          width:50%;
-          float: left;
-        }
-        .refinance-asset-selector__loantxt{
-          font-size: 12px;
-          color: #758295;
-          font-weight: normal;
-          width:100%;
-          float: left;
-        }
-        .refinance-asset-selector__imglogo{
-          font-size: 1rem;
-          //font-weight: bold;
-          width:12%;
-          float: left;
-          margin-top: 7px;
-          text-align: center;
-        }
-        .refinance-asset-selector__aprtxt{
-          font-size: 1rem;
-          //font-weight: bold;
-          width:40%;
-          float: left;
-        }
-        .refinance-loan-type__img{
-          width:40px;
-
-        }
-        .refinance-asset-selector__imgtxt{
-          font-size: 1rem;
-          font-weight: bold;
-          float: left;
-          margin-left: 14px;
-          width:29%
-        }
-
+      .refinance-asset-selector__imgtxt {
+        font-size: 1rem;
+        font-weight: bold;
+        float: left;
+        margin-left: 14px;
+        width: 29%
       }
+
+    }
 
     .refinance-asset-selector__interest-rate {
       width: 100%;
@@ -480,14 +520,15 @@
 
     margin: 0.5rem;
 
-      //&:first-child {
-      //  margin-left: 0;
-      //}
-      //
-      //&:last-child {
-      //  margin-right: 0;
-      //}
+    //&:first-child {
+    //  margin-left: 0;
+    //}
+    //
+    //&:last-child {
+    //  margin-right: 0;
+    //}
   }
+
   .refinance-selector-icons-bar__button {
     width: 331px;
     font-size: 16px;
@@ -502,9 +543,11 @@
     margin: auto;
     background-color: #9589f5;
   }
-  .mt30{
+
+  .mt30 {
     margin-top: 30px !important;
   }
+
   .refinance-selector-icons-disabled__button {
     width: 331px;
     font-size: 16px;
@@ -520,7 +563,8 @@
 
     background-color: #b6b5b9;
   }
-  .refinance-title-text{
+
+  .refinance-title-text {
     font-size: 12.5px;
     text-align: right;
     width: 80%;
@@ -528,10 +572,12 @@
     margin-top: 5px;
     color: #DE4A4A;
   }
-  .clr-red{
+
+  .clr-red {
     color: #DE4A4A;
   }
-  .linehr{
+
+  .linehr {
     border-top: solid 1px rgba(169, 181, 199, 0.2);
   }
 
@@ -587,8 +633,6 @@
 
       margin-left: 0;
       margin-top: 2.5rem;
-
-
 
 
       .refinance-asset-selector__title {
@@ -700,7 +744,7 @@
   }
 
   .modal-container {
-    width:100% !important;
+    width: 100% !important;
     padding: 15px !important;
 
     .modal-content {
@@ -708,7 +752,8 @@
     }
   }
 }
-.refinance-loading{
-    font-size: 28px;
-    font-weight: bold;
-  }
+
+.refinance-loading {
+  font-size: 28px;
+  font-weight: bold;
+}

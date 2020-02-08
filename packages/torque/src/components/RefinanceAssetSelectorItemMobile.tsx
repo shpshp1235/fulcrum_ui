@@ -14,7 +14,7 @@ import maker_img from "../assets/images/maker.svg";
 import torque_logo from "../assets/images/torque_logo.svg";
 import down_arrow from "../assets/images/vector-down-arrow.svg";
 import { Asset } from "../domain/Asset";
-import { RefinanceData } from "../domain/RefinanceData";
+import { IRefinanceData } from "../domain/IRefinanceData";
 import { TorqueProviderEvents } from "../services/events/TorqueProviderEvents";
 import { TorqueProvider } from "../services/TorqueProvider";
 
@@ -33,7 +33,7 @@ export interface IRefinanceAssetSelectorItemMobileProps {
 interface IRefinanceAssetSelectorItemMobileState {
   inputAmountText: number;
   borrowAmount: BigNumber;
-  refinanceData: RefinanceData[];
+  refinanceData: IRefinanceData[];
   isLoading: boolean;
   isTrack: boolean;
   fixedApr: BigNumber;
@@ -259,8 +259,7 @@ export class RefinanceAssetSelectorItemMobile extends Component<IRefinanceAssetS
                   <div className="refinance-title-text">Collateralization should be 150%+</div>
                 </div>
                 <div className="refinance-asset-selector__loan">
-                  <div
-                    className="clr-red">{this.state.refinanceData[0].collateralAmount.dp(3, BigNumber.ROUND_FLOOR).toString()}</div>
+                  {this.state.refinanceData[0].collateralAmount.dp(3, BigNumber.ROUND_FLOOR).toString()}
                   <div className="refinance-asset-selector__loantxt">Collateral</div>
                 </div>
 

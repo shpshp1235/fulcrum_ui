@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Asset } from "../domain/Asset";
-import { IRefinanceLoan } from "../domain/RefinanceData";
+import { IRefinanceLoan } from "../domain/IRefinanceData";
 import { WalletType } from "../domain/WalletType";
 import { TorqueProviderEvents } from "../services/events/TorqueProviderEvents";
 import { TorqueProvider } from "../services/TorqueProvider";

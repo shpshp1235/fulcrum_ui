@@ -1,7 +1,7 @@
 import { BigNumber } from "@0x/utils";
 import React, { Component } from "react";
 import { Asset } from "../domain/Asset";
-import { RefinanceCdpData } from "../domain/RefinanceData";
+import { IRefinanceCdpData } from "../domain/IRefinanceData";
 import { WalletType } from "../domain/WalletType";
 import { TorqueProviderEvents } from "../services/events/TorqueProviderEvents";
 import { TorqueProvider } from "../services/TorqueProvider";
@@ -20,7 +20,7 @@ interface IRefinanceAssetSelectorMobileItemState {
   isLoading: boolean;
   isItems: boolean;
   isShowRecord: boolean;
-  refinanceData: RefinanceCdpData[];
+  refinanceData: IRefinanceCdpData[];
 }
 
 export class RefinanceAssetSelectorMobile extends Component<IRefinanceAssetSelectorMobileProps, IRefinanceAssetSelectorMobileItemState> {

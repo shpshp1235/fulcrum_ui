@@ -2,7 +2,7 @@ import { BigNumber } from "@0x/utils";
 import { CTokenContract } from "../contracts/CToken";
 import { Asset } from "./Asset";
 
-export interface RefinanceData {
+export interface IRefinanceData { // TODO @bshevchenko: merge with IRefinanceToken
   collateralType: string;
   collateralAmount: BigNumber;
   debt: BigNumber;
@@ -17,7 +17,7 @@ export interface RefinanceData {
   variableAPR: BigNumber;
 }
 
-export interface RefinanceCdpData {
+export interface IRefinanceCdpData { // TODO @bshevchenko: merge with IRefinanceToken
   cdpId: BigNumber;
   urn: string;
   ilk: string;
@@ -50,19 +50,4 @@ export interface IRefinanceLoan extends IRefinanceToken {
 export interface IRefinanceCollateral extends IRefinanceToken {
   amount: BigNumber;
   borrowAmount: BigNumber;
-}
-
-export interface RefinanceCompoundData {
-  collateralAsset: Asset[];
-  collateralAmount: BigNumber[];
-  loanAsset: Asset;
-  loanAmount:  BigNumber;
-  variableAPR:BigNumber;
-  isDisabled: boolean;
-  isShowCard:boolean;
-  collateralization:number;
-  type:string;
-  usdValue: BigNumber;
-  decimals: number;
-  market: string;
 }
