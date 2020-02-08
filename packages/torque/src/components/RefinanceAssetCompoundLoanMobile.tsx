@@ -21,8 +21,7 @@ export class RefinanceAssetCompoundLoanMobile extends Component<IRefinanceAssetC
     super(props);
     this.state = {
       asset: Asset.DAI,
-      refinanceCompoundData:
-        []
+      refinanceCompoundData: []
     };
     TorqueProvider.Instance.eventEmitter.on(TorqueProviderEvents.ProviderAvailable, this.onProviderAvailable);
   }
@@ -38,8 +37,9 @@ export class RefinanceAssetCompoundLoanMobile extends Component<IRefinanceAssetC
   }
 
   private derivedUpdate = async () => {
-    const loans = await TorqueProvider.Instance.getCompoundLoans();
-    this.setState({ ...this.state, refinanceCompoundData: loans });
+    const compoundLoans = await TorqueProvider.Instance.getCompoundLoans();
+    const soloLoans = await TorqueProvider.Instance.getSoloLoans();
+    this.setState({ ...this.state, refinanceCompoundData: compoundLoans.concat(soloLoans) });
   };
 
   public render() {

@@ -40,6 +40,7 @@ export interface IRefinanceToken {
 }
 
 export interface IRefinanceLoan extends IRefinanceToken {
+  type: string;
   isHealthy: boolean;
   collateral: IRefinanceCollateral[];
   isDisabled: boolean;

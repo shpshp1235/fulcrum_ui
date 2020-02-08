@@ -127,7 +127,7 @@ export class RefinanceAssetSelectorItemMobile extends Component<IRefinanceAssetS
       });
       this._inputTextChange.next(this.state.inputAmountText);
       // @ts-ignore
-      const interestRate = await TorqueProvider.Instance.getAssetInterestRate(Asset[this.state.refinanceData[0].collateralType]);
+      const interestRate = await TorqueProvider.Instance.getAssetInterestRate(Asset.DAI);
       this.setState({ ...this.state, fixedApr: interestRate });
     }
   };

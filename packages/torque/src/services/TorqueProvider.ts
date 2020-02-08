@@ -33,13 +33,13 @@ import { ICollateralChangeEstimate } from "../domain/ICollateralChangeEstimate";
 import { ICollateralManagementParams } from "../domain/ICollateralManagementParams";
 import { IExtendEstimate } from "../domain/IExtendEstimate";
 import { IExtendState } from "../domain/IExtendState";
+import { IRefinanceCdpData, IRefinanceData, IRefinanceLoan, IRefinanceToken } from "../domain/IRefinanceData";
 import { IRepayEstimate } from "../domain/IRepayEstimate";
 import { IRepayState } from "../domain/IRepayState";
 import { IWalletDetails } from "../domain/IWalletDetails";
 import { IWeb3ProviderSettings } from "../domain/IWeb3ProviderSettings";
 import { ManageCollateralRequest } from "../domain/ManageCollateralRequest";
 import { ProviderType } from "../domain/ProviderType";
-import { IRefinanceLoan, IRefinanceToken, IRefinanceCdpData, IRefinanceData } from "../domain/IRefinanceData";
 import { RepayLoanRequest } from "../domain/RepayLoanRequest";
 import { SetupENSRequest } from "../domain/SetupENSRequest";
 import { WalletType } from "../domain/WalletType";
@@ -522,7 +522,7 @@ export class TorqueProvider {
       throw new Error("contractsSource is not defined");
     }
     const iToken = await this.contractsSource.getiTokenContract(asset);
-    console.log("collateralTokenAddress", collateralTokenAddress);
+    // console.log("collateralTokenAddress", collateralTokenAddress);
     // @ts-ignore
     const leverageAmount = web3.utils.soliditySha3(
       { "type": "uint256", "value": new BigNumber(2 * 10 ** 18) },
@@ -530,7 +530,7 @@ export class TorqueProvider {
     );
     // @ts-ignore
     const hash = await iToken.loanOrderHashes.callAsync(parseInt(leverageAmount, 10));
-    console.log("hash", hash);
+    // console.log("hash", hash);
     const data = await iToken.loanOrderData.callAsync(hash);
     return new BigNumber("150"); // TODO @bshevchenko return data[3];
   };
@@ -645,6 +645,7 @@ export class TorqueProvider {
         const borrowRate = await cToken.borrowRatePerBlock.callAsync();
         loans.push({
           ...token,
+          type: "compound",
           isHealthy: false,
           isDisabled: false,
           collateral: [],
@@ -713,6 +714,7 @@ export class TorqueProvider {
         const interestRate = await solo.getMarketInterestRate.callAsync(new BigNumber(market));
         loans.push({
           ...token,
+          type: "solo",
           isHealthy: false,
           isDisabled: false,
           collateral: [],
@@ -805,6 +807,7 @@ export class TorqueProvider {
   };
 
   public migrateSoloLoan = async (loan: IRefinanceLoan, amount: BigNumber) => {
+
     const account = this.accounts.length > 0 && this.accounts[0] ? this.accounts[0].toLowerCase() : null;
     if (!this.web3Wrapper || !this.contractsSource || !account) {
       return;

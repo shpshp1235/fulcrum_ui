@@ -4,7 +4,7 @@ import { Subject } from "rxjs";
 import arrow_right from "../assets/images/arrow.svg";
 import compound_img from "../assets/images/compound.svg";
 import downArrow from "../assets/images/down-arrow.svg";
-// import dydx_img from "../assets/images/dydx.svg";
+import dydx_img from "../assets/images/dydx.svg";
 import bgBtc from "../assets/images/ic_token_btc.svg";
 import bgDai from "../assets/images/ic_token_dai.svg";
 import bgEth from "../assets/images/ic_token_eth.svg";
@@ -110,8 +110,13 @@ export class RefinanceAssetCompoundLoanItem extends Component<IRefinanceLoan, IR
       window.location.href = "/#/dashboard/w/";
     } else {
       this.setState({ ...this.state, isLoading: true });
-      const refinanceData = await TorqueProvider.Instance.migrateCompoundLoan({ ...this.props }, this.state.borrowAmount);
-      if (refinanceData !== null) {
+      let receipt;
+      if (this.props.type === 'solo') {
+        receipt = await TorqueProvider.Instance.migrateSoloLoan({ ...this.props }, this.state.borrowAmount);
+      } else {
+        receipt = await TorqueProvider.Instance.migrateCompoundLoan({ ...this.props }, this.state.borrowAmount);
+      }
+      if (receipt !== null) {
         this.setState({ ...this.state, isLoading: false, isTrack: true });
       } else {
         this.setState({ ...this.state, isLoading: false, isTrack: false });
@@ -120,7 +125,7 @@ export class RefinanceAssetCompoundLoanItem extends Component<IRefinanceLoan, IR
   };
 
   private derivedUpdate = async () => {
-    const interestRate = await TorqueProvider.Instance.getAssetInterestRate(this.props.collateral[0].asset);
+    const interestRate = await TorqueProvider.Instance.getAssetInterestRate(this.props.asset);
     this.setState({ ...this.state, fixedApr: interestRate });
   };
 
@@ -147,10 +152,13 @@ export class RefinanceAssetCompoundLoanItem extends Component<IRefinanceLoan, IR
       <div className={`refinance-asset-selector-item `}>
         <div className="refinance-asset-block">
           <div className="refinance-asset-selector__row">
-            <div className="refinance-asset-selector__marker"><img className="logo__dydx" src={compound_img}/> <img
-              className="right-icon" src={arrow_right}/></div>
-            <div className="refinance-asset-selector__torque"><img className="logo__image" src={torque_logo}
-                                                                   alt="torque-logo"/></div>
+            <div className="refinance-asset-selector__marker">
+              <img className="logo__dydx" src={this.props.type === "solo" ? dydx_img : compound_img} />
+              <img className="right-icon" src={arrow_right}/>
+            </div>
+            <div className="refinance-asset-selector__torque">
+              <img className="logo__image" src={torque_logo} alt="torque-logo"/>
+            </div>
           </div>
           <div className="refinance-asset-selector__rowimg">
             <div className="refinance-asset-selector__varapy">{this.props.apr.dp(1, BigNumber.ROUND_CEIL).toString()}%
