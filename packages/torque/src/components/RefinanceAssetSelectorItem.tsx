@@ -1,7 +1,6 @@
 import { BigNumber } from "@0x/utils";
 import React, { ChangeEvent, Component } from "react";
 import { Subject } from "rxjs";
-// import { debounceTime, switchMap } from "rxjs/operators";
 import arrow_right from "../assets/images/arrow.svg";
 import bgBtc from "../assets/images/ic_token_btc.svg";
 import bgDai from "../assets/images/ic_token_dai.svg";
@@ -28,7 +27,6 @@ export interface IRefinanceAssetSelectorItemProps {
   proxyAddress: string;
   isProxy: boolean;
   isInstaProxy: boolean;
-  // onSelectAsset?: (asset: Asset) => void;
 }
 
 interface IRefinanceAssetSelectorItemState {
@@ -70,18 +68,6 @@ export class RefinanceAssetSelectorItem extends Component<IRefinanceAssetSelecto
     };
     TorqueProvider.Instance.eventEmitter.on(TorqueProviderEvents.ProviderAvailable, this.onProviderAvailable);
     this._inputTextChange = new Subject<number>();
-    // this._inputTextChange
-    //   .pipe(
-    //     debounceTime(100),
-    //     switchMap(value => this.rxConvertToBigNumber(value)),
-    //     // switchMap(value => this.rxGetEstimate(value))
-    //   )
-    // .subscribe((value: IBorrowEstimate) => {
-    //   this.setState({
-    //     ...this.state,
-    //     depositAmount: value.depositAmount
-    //   });
-    // });
   }
 
   private onProviderAvailable = () => {
@@ -132,9 +118,6 @@ export class RefinanceAssetSelectorItem extends Component<IRefinanceAssetSelecto
   public loanAmountChange = async (event: ChangeEvent<HTMLInputElement>) => {
     // handling different types of empty values
     const amountText = event.target.value ? event.target.value : "0";
-    // console.log(amountText);
-    // setting inputAmountText to update display at the same time
-
     this.setState({
       ...this.state,
       inputAmountText: parseInt(amountText, 10),
@@ -245,7 +228,7 @@ export class RefinanceAssetSelectorItem extends Component<IRefinanceAssetSelecto
           </div>
           <div className="linehr" />
           <div className="refinance-asset-block">
-            {this.state.refinanceData[0].variableAPR.gt(this.state.fixedApr) ?
+            {this.state.fixedApr.gt(0) && this.state.refinanceData[0].variableAPR.gt(this.state.fixedApr) ?
               <div className="refinance-asset-selector__desc">
                 <div className="refinance-asset-selector__simple">Refinancing with <b>FIXED</b> rates could save
                   you &nbsp;</div>
@@ -278,37 +261,31 @@ export class RefinanceAssetSelectorItem extends Component<IRefinanceAssetSelecto
   private getAssetsData = () => {
     switch (this.props.asset) {
       case Asset.DAI:
-        return { name: "Compound", title: "Refinancing with <b>FIXED</b> rates could save you", img: bgDai };
+        return { name: "Compound", img: bgDai };
 
       case Asset.SAI:
-        return { name: "DX/DY", title: "Refinancing with Fixed rates could save you", img: bgSai };
+        return { name: "DX/DY", img: bgSai };
 
       case Asset.USDC:
-        return { name: "Compound", title: "Refinancing with Fixed rates could save you", img: bgUsdc };
+        return { name: "Compound", img: bgUsdc };
 
       case Asset.ETH:
-        return { name: "DX/DY", title: "Refinancing with Fixed rates could save you", img: bgEth };
+        return { name: "DX/DY", img: bgEth };
 
       case Asset.WBTC:
-        return { name: "Compound", title: "Refinancing with Fixed rates could save you", img: bgBtc };
+        return { name: "Compound", img: bgBtc };
 
       case Asset.LINK:
-        return { name: "DX/DY", title: "Refinancing with Fixed rates could save you", img: bgLink };
+        return { name: "DX/DY", img: bgLink };
 
       case Asset.ZRX:
-        return { name: "Compound", title: "Refinancing with Fixed rates could save you", img: bgZrx };
+        return { name: "Compound", img: bgZrx };
 
       case Asset.REP:
-        return { name: "Compound", title: "Refinancing with Fixed rates could save you", img: bgRep };
+        return { name: "Compound", img: bgRep };
 
       case Asset.KNC:
-        return { name: "DX/DY", title: "Refinancing with Fixed rates could save you", img: bgKnc };
+        return { name: "DX/DY", img: bgKnc };
     }
   };
-
-  // private onClick = () => {
-  //   if (this.props.onSelectAsset) {
-  //     this.props.onSelectAsset(this.props.asset);
-  //   }
-  // };
 }

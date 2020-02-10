@@ -17,7 +17,7 @@ export interface IRefinanceData { // TODO @bshevchenko: merge with IRefinanceTok
   variableAPR: BigNumber;
 }
 
-export interface IRefinanceCdpData { // TODO @bshevchenko: merge with IRefinanceToken
+export interface IRefinanceMakerLoan {
   cdpId: BigNumber;
   urn: string;
   ilk: string;

@@ -33,7 +33,7 @@ import { ICollateralChangeEstimate } from "../domain/ICollateralChangeEstimate";
 import { ICollateralManagementParams } from "../domain/ICollateralManagementParams";
 import { IExtendEstimate } from "../domain/IExtendEstimate";
 import { IExtendState } from "../domain/IExtendState";
-import { IRefinanceCdpData, IRefinanceData, IRefinanceLoan, IRefinanceToken } from "../domain/IRefinanceData";
+import { IRefinanceData, IRefinanceLoan, IRefinanceMakerLoan, IRefinanceToken } from "../domain/IRefinanceData";
 import { IRepayEstimate } from "../domain/IRepayEstimate";
 import { IRepayState } from "../domain/IRepayState";
 import { IWalletDetails } from "../domain/IWalletDetails";
@@ -879,8 +879,8 @@ export class TorqueProvider {
     }
   };
 
-  public getMakerLoans = async (): Promise<IRefinanceCdpData[]> => {
-    let result: IRefinanceCdpData[] = [{
+  public getMakerLoans = async (): Promise<IRefinanceMakerLoan[]> => {
+    let result: IRefinanceMakerLoan[] = [{
       cdpId: new BigNumber(0),
       urn: "",
       ilk: "",

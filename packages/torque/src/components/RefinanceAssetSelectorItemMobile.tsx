@@ -27,7 +27,6 @@ export interface IRefinanceAssetSelectorItemMobileProps {
   proxyAddress: string;
   isProxy: boolean;
   isInstaProxy: boolean;
-  // onSelectAsset?: (asset: Asset) => void;
 }
 
 interface IRefinanceAssetSelectorItemMobileState {
@@ -69,18 +68,6 @@ export class RefinanceAssetSelectorItemMobile extends Component<IRefinanceAssetS
     };
     TorqueProvider.Instance.eventEmitter.on(TorqueProviderEvents.ProviderAvailable, this.onProviderAvailable);
     this._inputTextChange = new Subject<number>();
-    // this._inputTextChange
-    //   .pipe(
-    //     debounceTime(100),
-    //     switchMap(value => this.rxConvertToBigNumber(value)),
-    //     // switchMap(value => this.rxGetEstimate(value))
-    //   )
-    // .subscribe((value: IBorrowEstimate) => {
-    //   this.setState({
-    //     ...this.state,
-    //     depositAmount: value.depositAmount
-    //   });
-    // });
   }
 
   private rxConvertToBigNumber = (textValue: string): Observable<BigNumber> => {
@@ -131,15 +118,14 @@ export class RefinanceAssetSelectorItemMobile extends Component<IRefinanceAssetS
       this.setState({ ...this.state, fixedApr: interestRate });
     }
   };
+
   public loanAmountChange = async (event: ChangeEvent<HTMLInputElement>) => {
     // handling different types of empty values
     const amountText = event.target.value ? event.target.value : "0";
-    // console.log(amountText);
-    // setting inputAmountText to update display at the same time
 
     this.setState({
       ...this.state,
-      inputAmountText: parseInt(amountText),
+      inputAmountText: parseInt(amountText, 10),
       borrowAmount: new BigNumber(amountText)
     }, () => {
       // emitting next event for processing with rx.js
@@ -158,25 +144,17 @@ export class RefinanceAssetSelectorItemMobile extends Component<IRefinanceAssetS
       } else {
         this.setState({ ...this.state, isLoading: false, isTrack: false });
       }
-
     }
-
   };
 
   public render() {
-    const assetTypeModifier = "asset-selector-item--" + this.props.asset.toLowerCase();
-    const assetsDt: any = this.getAssestsData();
-    // let btnClass = !this.state.isLoading ? 'refinance-selector-icons-bar__button' : 'refinance-selector-icons-disabled__button';
-    let btnValue = this.state.isLoading ? "Loading..." : "Refinance with " + this.state.fixedApr.dp(1, BigNumber.ROUND_CEIL).toString() + "% APR Fixed";
-    let btnActiveValue = this.state.isTrack ? "Track" : "Refinance with " + this.state.fixedApr.dp(1, BigNumber.ROUND_CEIL).toString() + "% APR Fixed";
-    // let refRateYear = this.state.refinanceData[0].variableAPR.minus(this.state.fixedApr)
-    //   refRateYear =   refRateYear.multipliedBy(this.state.refinanceData[0].debt)
-    //   refRateYear = refRateYear.dividedBy(100)  //.dp(3, BigNumber.ROUND_FLOOR) - this.state.fixedApr.dp(3, BigNumber.ROUND_FLOOR)
-    let refRateYear = ((parseFloat(this.state.refinanceData[0].variableAPR.dp(0, BigNumber.ROUND_CEIL).toString()) - parseFloat(this.state.fixedApr.dp(1, BigNumber.ROUND_CEIL).toString())) * parseFloat(this.state.refinanceData[0].debt.dp(3, BigNumber.ROUND_FLOOR).toString())) / 100;
-    let refRateMonth = refRateYear / 12;
-    let btnCls = this.state.refinanceData[0].variableAPR.gt(this.state.fixedApr) ? "mt30" : "";
+    const assetsDt: any = this.getAssetsData();
+    const btnValue = this.state.isLoading ? "Loading..." : "Refinance with " + this.state.fixedApr.dp(1, BigNumber.ROUND_CEIL).toString() + "% APR Fixed";
+    const btnActiveValue = this.state.isTrack ? "Track" : "Refinance with " + this.state.fixedApr.dp(1, BigNumber.ROUND_CEIL).toString() + "% APR Fixed";
+    const refRateYear = ((parseFloat(this.state.refinanceData[0].variableAPR.dp(0, BigNumber.ROUND_CEIL).toString()) - parseFloat(this.state.fixedApr.dp(1, BigNumber.ROUND_CEIL).toString())) * parseFloat(this.state.refinanceData[0].debt.dp(3, BigNumber.ROUND_FLOOR).toString())) / 100;
+    const refRateMonth = refRateYear / 12;
+    const btnCls = this.state.refinanceData[0].variableAPR.gt(this.state.fixedApr) ? "mt30" : "";
     if (this.state.refinanceData[0].isShowCard) {
-
       return (
         <div className={`refinance-asset-selector-item `}>
           <div className="refinance-asset-block">
@@ -226,7 +204,6 @@ export class RefinanceAssetSelectorItemMobile extends Component<IRefinanceAssetS
               </div>
             </div>
             <div className="refinance-asset-selector__rowimg">
-
               <div className="refinance-asset-selector__torque">
                 <img className="logo__image" src={torque_logo} alt="torque-logo"/>
               </div>
@@ -236,8 +213,6 @@ export class RefinanceAssetSelectorItemMobile extends Component<IRefinanceAssetS
                 </div>
                 <div className="refinance-asset-selector__aprtxt">Fixed APR</div>
               </div>
-
-              {/*<div className="refinance-asset-selector__img"><img src={assetsDt.img} /></div>*/}
             </div>
 
             <div className="refinance-asset-selector__row mb2 mt20">
@@ -272,9 +247,9 @@ export class RefinanceAssetSelectorItemMobile extends Component<IRefinanceAssetS
               </div>
             ) : null}
           </div>
-          <div className="linehr"></div>
+          <div className="linehr"/>
           <div className="refinance-asset-block">
-            {this.state.refinanceData[0].variableAPR.gt(this.state.fixedApr) ?
+            {this.state.fixedApr.gt(0) && this.state.refinanceData[0].variableAPR.gt(this.state.fixedApr) ?
               <div className="refinance-asset-selector__desc">
                 <div className="refinance-asset-selector__simple">Refinancing with <b>FIXED</b> rates could save
                   you &nbsp;</div>
@@ -282,9 +257,8 @@ export class RefinanceAssetSelectorItemMobile extends Component<IRefinanceAssetS
                   ${refRateYear.toFixed(2)}/yr
                 </div>
               </div>
-              : <div className="refinance-asset-selector__desc"></div>
+              : <div className="refinance-asset-selector__desc"/>
             }
-
             {this.state.refinanceData[0].isDisabled || this.state.borrowAmount.lte(0) || this.state.borrowAmount.gt(this.state.refinanceData[0].debt) || this.state.isLoading ?
               <div className={`refinance-selector-icons__item refinance-selector-icons-disabled__button ${btnCls}`}>
                 {btnValue}
@@ -304,43 +278,26 @@ export class RefinanceAssetSelectorItemMobile extends Component<IRefinanceAssetS
     }
   }
 
-  private getAssestsData = () => {
-    console.log("assestsType = ", this.props.asset);
+  private getAssetsData = () => {
     switch (this.props.asset) {
       case Asset.DAI:
-        return { name: "Compound", title: "Refinancing with <b>FIXED</b> rates could save you", img: bgDai };
-        break;
+        return { name: "Compound", img: bgDai };
       case Asset.SAI:
-        return { name: "DX/DY", title: "Refinancing with Fixed rates could save you", img: bgSai };
-        break;
+        return { name: "DX/DY", img: bgSai };
       case Asset.USDC:
-        return { name: "Compound", title: "Refinancing with Fixed rates could save you", img: bgUsdc };
-        break;
+        return { name: "Compound", img: bgUsdc };
       case Asset.ETH:
-        return { name: "DX/DY", title: "Refinancing with Fixed rates could save you", img: bgEth };
-        break;
+        return { name: "DX/DY", img: bgEth };
       case Asset.WBTC:
-        return { name: "Compound", title: "Refinancing with Fixed rates could save you", img: bgBtc };
-        break;
+        return { name: "Compound", img: bgBtc };
       case Asset.LINK:
-        return { name: "DX/DY", title: "Refinancing with Fixed rates could save you", img: bgLink };
-        break;
+        return { name: "DX/DY", img: bgLink };
       case Asset.ZRX:
-        return { name: "Compound", title: "Refinancing with Fixed rates could save you", img: bgZrx };
-        break;
+        return { name: "Compound", img: bgZrx };
       case Asset.REP:
-        return { name: "Compound", title: "Refinancing with Fixed rates could save you", img: bgRep };
-        break;
+        return { name: "Compound", img: bgRep };
       case Asset.KNC:
-        return { name: "DX/DY", title: "Refinancing with Fixed rates could save you", img: bgKnc };
-        break;
+        return { name: "DX/DY", img: bgKnc };
     }
   };
-
-
-  // private onClick = () => {
-  //   if (this.props.onSelectAsset) {
-  //     this.props.onSelectAsset(this.props.asset);
-  //   }
-  // };
 }

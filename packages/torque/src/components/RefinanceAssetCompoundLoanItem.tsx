@@ -234,7 +234,7 @@ export class RefinanceAssetCompoundLoanItem extends Component<IRefinanceLoan, IR
         </div>
         <div className="linehr"/>
         <div className="refinance-asset-block">
-          {this.props.apr.gt(this.state.fixedApr) ?
+          {this.state.fixedApr.gt(0) && this.props.apr.gt(this.state.fixedApr) ?
             <div className="refinance-asset-selector__desc">
               <div className="refinance-asset-selector__simple">Refinancing with <b>FIXED</b> rates could save
                 you &nbsp;</div>
