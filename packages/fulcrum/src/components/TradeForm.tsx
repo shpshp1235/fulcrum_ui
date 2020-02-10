@@ -220,7 +220,8 @@ export class TradeForm extends Component<ITradeFormProps, ITradeFormState> {
       this.props.leverage,
       limitedAmount.tradeAmountValue,// new BigNumber(0),
       this.state.tokenizeNeeded,
-      this.props.version
+      this.props.version,
+      this.state.inputAmountValue
     );
 
     const tradeExpectedResults = await this.getTradeExpectedResults(tradeRequest);
@@ -263,11 +264,13 @@ export class TradeForm extends Component<ITradeFormProps, ITradeFormState> {
   };
 
   public componentWillUnmount(): void {
+    window.history.back();
     FulcrumProvider.Instance.eventEmitter.removeListener(FulcrumProviderEvents.ProviderChanged, this.onProviderChanged);
   }
 
   public componentDidMount(): void {
     this.derivedUpdate();
+    window.history.pushState(null, "Trade Modal Opened", `/#/trade/${this.props.tradeType.toLocaleLowerCase()}-${this.props.leverage}x-${this.props.positionType.toLocaleLowerCase()}-${this.props.asset}/`);
 
     if (this._input) {
       this._input.select();
@@ -389,7 +392,7 @@ export class TradeForm extends Component<ITradeFormProps, ITradeFormState> {
                   <img className="asset-logo" src={this.state.assetDetails.logoSvg} alt={tokenNameBase} />
                   <PositionTypeMarkerAlt assetDetails={this.state.assetDetails} value={this.props.positionType} />
                 </div>
-                <div className="trade-form__info_block__asset" style={{color: this.state.assetDetails.textColor}}>
+                <div className="trade-form__info_block__asset" style={this.props.asset === Asset.WBTC ? {color: this.state.assetDetails.textColor, paddingTop: `1rem` } : {color: this.state.assetDetails.textColor}}>
                   {tokenNameBase}
                 </div>
                 <div className="trade-form__info_block__stats"  style={{color: this.state.assetDetails.textColor2}}>
@@ -408,7 +411,7 @@ export class TradeForm extends Component<ITradeFormProps, ITradeFormState> {
                   <img className="asset-logo" src={this.state.assetDetails.logoSvg} alt={tokenNameBase} />
                   <PositionTypeMarkerAlt assetDetails={this.state.assetDetails} value={this.props.positionType} />
                 </div>
-                <div className="trade-form__info_block__asset" style={{color: this.state.assetDetails.textColor}}>
+                <div className="trade-form__info_block__asset" style={this.props.asset === Asset.WBTC ? {color: this.state.assetDetails.textColor, paddingTop: `1rem` } : {color: this.state.assetDetails.textColor}}>
                   {tokenNameBase}
                 </div>
                 <div className="trade-form__info_block__stats"  style={{color: this.state.assetDetails.textColor2}}>
@@ -577,7 +580,8 @@ export class TradeForm extends Component<ITradeFormProps, ITradeFormState> {
         this.props.leverage,
         this.state.tradeAmountValue,
         this.state.tokenizeNeeded,
-        version
+        version,
+        this.state.inputAmountValue
       )
     );
   };
@@ -638,7 +642,8 @@ export class TradeForm extends Component<ITradeFormProps, ITradeFormState> {
         this.props.leverage,
         this.state.tradeAmountValue,
         this.state.tokenizeNeeded,
-        this.props.version
+        this.props.version,
+        this.state.inputAmountValue
       )
     );
   };
@@ -661,7 +666,8 @@ export class TradeForm extends Component<ITradeFormProps, ITradeFormState> {
                 this.props.leverage,
                 limitedAmount.tradeAmountValue,
                 this.state.tokenizeNeeded,
-                this.props.version
+                this.props.version,
+                this.state.inputAmountValue
               );
 
               this.getTradeExpectedResults(tradeRequest).then(tradeExpectedResults => {
@@ -702,7 +708,8 @@ export class TradeForm extends Component<ITradeFormProps, ITradeFormState> {
             this.props.leverage,
             limitedAmount.tradeAmountValue,
             this.state.tokenizeNeeded,
-            this.props.version
+            this.props.version,
+            this.state.inputAmountValue
           );
 
           this.getTradeExpectedResults(tradeRequest).then(tradeExpectedResults => {

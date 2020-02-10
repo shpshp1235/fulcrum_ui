@@ -52,12 +52,16 @@ export class TradeTokenGrid extends Component<ITradeTokenGridProps, ITradeTokenG
     super(props);
 
     TradeTokenGrid.defaultUnitOfAccount = process.env.REACT_APP_ETH_NETWORK === "kovan" ?
-      Asset.SAI :
+      //Asset.SAI :
+      Asset.DAI :
       Asset.DAI;
 
     if (process.env.REACT_APP_ETH_NETWORK === "kovan") {
       TradeTokenGrid.assets = [
         Asset.ETH
+      ];
+    } else if (process.env.REACT_APP_ETH_NETWORK === "ropsten") {
+      TradeTokenGrid.assets = [
       ];
     } else {
       TradeTokenGrid.assets = [
@@ -87,11 +91,13 @@ export class TradeTokenGrid extends Component<ITradeTokenGridProps, ITradeTokenG
   }
 
   public async derivedUpdate() {
-
-    this.setState({ ...this.state, tokenSingleRowsData:TradeTokenGrid.getSingleRowData(this.props) }) ;
-    this.setState({ ...this.state, tokenRowsData: TradeTokenGrid.getRowsData(this.props) }) ;
-
+    if(!this.props.isMobileMedia){
+      this.setState({ ...this.state, tokenRowsData: TradeTokenGrid.getRowsData(this.props) }) ;
+    }else{
+      this.setState({ ...this.state, tokenSingleRowsData:TradeTokenGrid.getSingleRowData(this.props) }) ;
       this.setState({ ...this.state, tokenSingleRowsData:TradeTokenGrid.getSingleRowData(this.props), tokenLongShortRowsData:TradeTokenGrid.getRowsLongShortData(this.props) }) ;
+    }
+
       // this.setState({ ...this.state, tokenSingleRowsData:TradeTokenGrid.getSingleRowData(this.props) }) ;
   }
 
@@ -145,7 +151,6 @@ export class TradeTokenGrid extends Component<ITradeTokenGridProps, ITradeTokenG
     // const assetDetails = AssetsDictionary.assets.get(this.state.tokenRowsData[0].asset);
     const tokenRowsFooterMobile = this.state.tokenSingleRowsData.map(e => <TradeTokenGridRowMobileFooter key={`${e.asset}_${e.positionType}`} {...e} />);
     const tokenRowsMobile = this.state.tokenLongShortRowsData.map(e => <TradeTokenGridRowMobile key={`${e.asset}_${e.positionType}_${e.defaultLeverage}`} {...e} />);
-    // console.log("tokenRowsMobile = "+tokenRowsMobile)
     return (
       <div className="trade-token-grid">
         <div className="trade-new-grid">
@@ -203,7 +208,7 @@ export class TradeTokenGrid extends Component<ITradeTokenGridProps, ITradeTokenG
                               dataLayerName: 'PageDataLayer'
                           }
 
-    // console.log("tagManagerArgs = "+tagManagerArgs)
+
     TagManager.dataLayer(tagManagerArgs)
     //
     this.props.onTrade(
