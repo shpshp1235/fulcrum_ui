@@ -6,13 +6,9 @@ import { WalletType } from "../domain/WalletType";
 import { TorqueProviderEvents } from "../services/events/TorqueProviderEvents";
 import { TorqueProvider } from "../services/TorqueProvider";
 import { RefinanceAssetSelectorItemMobile } from "./RefinanceAssetSelectorItemMobile";
-// export interface IRefinanceAssetSelectorMobileItemProps {
-//   asset: Asset;
-//   onSelectAsset?: (asset: Asset) => void;
-// }
+
 export interface IRefinanceAssetSelectorMobileProps {
   walletType: WalletType
-  // onSelectAsset?: (asset: Asset) => void;
 }
 
 interface IRefinanceAssetSelectorMobileItemState {
@@ -46,53 +42,7 @@ export class RefinanceAssetSelectorMobile extends Component<IRefinanceAssetSelec
 
   }
 
-  // true includes ENS support
-  private readonly assetsShown: Map<Asset, boolean> = new Map<Asset, boolean>([
-    [
-      Asset.DAI,
-      true
-    ]
-    // [
-    //   Asset.DAI,
-    //   false
-    // ],
-    // [
-    //   Asset.USDC,
-    //   true
-    // ],
-    // /*[
-    //   Asset.SUSD,
-    //   false
-    // ],*/
-    // [
-    //   Asset.ETH,
-    //   false
-    // ],
-    // [
-    //   Asset.WBTC,
-    //   false
-    // ],
-    // [
-    //   Asset.LINK,
-    //   false
-    // ],
-    // [
-    //   Asset.ZRX,
-    //   false
-    // ],
-    // [
-    //   Asset.REP,
-    //   false
-    // ],
-    // [
-    //   Asset.KNC,
-    //   false
-    // ],
-  ]);
-
-
   private onProviderAvailable = () => {
-
     this.derivedUpdate();
   };
 
@@ -106,7 +56,6 @@ export class RefinanceAssetSelectorMobile extends Component<IRefinanceAssetSelec
 
     const refinanceData = await TorqueProvider.Instance.getMakerLoans();
 
-    // tslint:disable-next-line
     for (let i = 0; i < refinanceData.length; i++) {
       if (refinanceData[i].cdpId.gt(0)) {
         isItem = true;
@@ -135,12 +84,9 @@ export class RefinanceAssetSelectorMobile extends Component<IRefinanceAssetSelec
     }
 
     this.setState({ ...this.state, refinanceData: refinanceData });
-
   };
 
-
   public render() {
-
     const refinance = this.state.refinanceData;
 
     let items;

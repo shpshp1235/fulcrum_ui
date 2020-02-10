@@ -14,6 +14,7 @@ export interface IRefinanceAssetCompoundLoanMobileProps {
 interface IRefinanceCompoundSelectorItemState {
   asset: Asset,
   refinanceCompoundData: IRefinanceLoan[];
+  isLoading: boolean;
 }
 
 export class RefinanceAssetCompoundLoanMobile extends Component<IRefinanceAssetCompoundLoanMobileProps, IRefinanceCompoundSelectorItemState> {
@@ -21,7 +22,8 @@ export class RefinanceAssetCompoundLoanMobile extends Component<IRefinanceAssetC
     super(props);
     this.state = {
       asset: Asset.DAI,
-      refinanceCompoundData: []
+      refinanceCompoundData: [],
+      isLoading: true,
     };
     TorqueProvider.Instance.eventEmitter.on(TorqueProviderEvents.ProviderAvailable, this.onProviderAvailable);
   }
@@ -39,7 +41,17 @@ export class RefinanceAssetCompoundLoanMobile extends Component<IRefinanceAssetC
   private derivedUpdate = async () => {
     const compoundLoans = await TorqueProvider.Instance.getCompoundLoans();
     const soloLoans = await TorqueProvider.Instance.getSoloLoans();
-    this.setState({ ...this.state, refinanceCompoundData: compoundLoans.concat(soloLoans) });
+    const loans = compoundLoans.concat(soloLoans);
+    this.setState({ ...this.state, refinanceCompoundData: loans });
+
+    if (loans.length) {
+      await this.sleep(1000);
+      this.setState({ isLoading: false });
+    }
+  };
+
+  public sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   };
 
   public render() {
@@ -58,6 +70,12 @@ export class RefinanceAssetCompoundLoanMobile extends Component<IRefinanceAssetC
         );
       });
     }
-    return <div className="refinance-asset-selector">{items}</div>;
+    return <div className="refinance-asset-selector">
+      <div className="refinance-page__main-centeredOverlay"
+           style={!this.state.isLoading ? { display: `none` } : undefined}>
+        <span>Loading...</span>
+      </div>
+      {items}
+    </div>;
   }
 }
