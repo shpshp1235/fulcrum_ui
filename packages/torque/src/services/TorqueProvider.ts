@@ -521,18 +521,16 @@ export class TorqueProvider {
     if (!this.contractsSource) {
       throw new Error("contractsSource is not defined");
     }
-    // const iToken = await this.contractsSource.getiTokenContract(asset);
-    // // console.log("collateralTokenAddress", collateralTokenAddress);
-    // // @ts-ignore
-    // const leverageAmount = web3.utils.soliditySha3(
-    //   { "type": "uint256", "value": new BigNumber(2 * 10 ** 18) },
-    //   { "type": "address", "value": collateralTokenAddress }
-    // );
-    // // @ts-ignore
-    // const hash = await iToken.loanOrderHashes.callAsync(parseInt(leverageAmount, 10));
-    // // console.log("hash", hash);
-    // const data = await iToken.loanOrderData.callAsync(hash);
-    return new BigNumber("150"); // TODO @bshevchenko return data[3];
+    const iToken = await this.contractsSource.getiTokenContract(asset);
+    // @ts-ignore
+    const leverageAmount = web3.utils.soliditySha3(
+      { "type": "uint256", "value": new BigNumber(2 * 10 ** 18) },
+      { "type": "address", "value": collateralTokenAddress }
+    );
+    // @ts-ignore
+    const hash = await iToken.loanOrderHashes.callAsync(leverageAmount);
+    const data = await iToken.loanOrderData.callAsync(hash);
+    return data[3].div(10 ** 17);
   };
 
   private assignCollateral = async (loans: IRefinanceLoan[], deposits: IRefinanceToken[], inRatio?: BigNumber) => {
@@ -1044,7 +1042,7 @@ export class TorqueProvider {
       if (parseFloat(collateralAmount.toString()) > 0 && parseFloat(debtAmount.toString()) > 0) {
         isShowCard = true;
 
-        const rate = await this.getSwapRate(collateralAsset, asset);
+        const rate = await this.getSwapRate(collateralAsset, Asset.DAI);
 
         ratio = rate.times(collateralAmount).div(debtAmount);
 
