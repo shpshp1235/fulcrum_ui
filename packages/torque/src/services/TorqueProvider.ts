@@ -842,7 +842,7 @@ export class TorqueProvider {
 
     const divider = loan.balance.div(amount);
 
-    if (amount.isEqualTo(loan.balance)) {
+    if (amount.dp(3, BigNumber.ROUND_FLOOR).isEqualTo(loan.balance.dp(3, BigNumber.ROUND_FLOOR))) {
       amount = new BigNumber(0);
     }
 
@@ -1097,6 +1097,10 @@ export class TorqueProvider {
       if (!confirm("Remaining debt should be zero or more than " + refRequest.dust.toString(10) + " DAI. Do you want to continue with total amount?")) {
         return null;
       }
+      loanAmount = refRequest.debt;
+    }
+
+    if (loanAmount.dp(3, BigNumber.ROUND_FLOOR).isEqualTo(refRequest.debt.dp(3, BigNumber.ROUND_FLOOR))) {
       loanAmount = refRequest.debt;
     }
 
