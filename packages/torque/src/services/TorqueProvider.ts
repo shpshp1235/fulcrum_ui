@@ -524,7 +524,7 @@ export class TorqueProvider {
     const iToken = await this.contractsSource.getiTokenContract(asset);
     // @ts-ignore
     const leverageAmount = web3.utils.soliditySha3(
-      { "type": "uint256", "value": new BigNumber(2 * 10 ** 18) },
+      { "type": "uint256", "value": (new BigNumber(2 * 10 ** 18)).toString(10) },
       { "type": "address", "value": collateralTokenAddress }
     );
     // @ts-ignore
