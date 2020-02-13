@@ -764,6 +764,11 @@ export class TorqueProvider {
     }, 3000);
 
     const divider = loan.balance.div(amount);
+
+    if (amount.dp(3, BigNumber.ROUND_FLOOR).isEqualTo(loan.balance.dp(3, BigNumber.ROUND_FLOOR))) {
+      amount = new BigNumber(0);
+    }
+
     loan.usdValue = loan.usdValue.div(divider);
     loan.balance = loan.balance.div(divider);
 
@@ -774,7 +779,6 @@ export class TorqueProvider {
     const amounts: BigNumber[] = [];
     const borrowAmounts: BigNumber[] = [];
 
-    let borrowAmountsSum = new BigNumber(0);
     for (const token of loan.collateral) {
       // @ts-ignore
       assets.push(token.market);
@@ -783,12 +787,9 @@ export class TorqueProvider {
       );
       const borrowAmount = token.borrowAmount.times(10 ** loan.decimals).integerValue(BigNumber.ROUND_DOWN);
       borrowAmounts.push(borrowAmount);
-      borrowAmountsSum = borrowAmountsSum.plus(borrowAmount);
     }
 
     amount = amount.times(10 ** loan.decimals).integerValue(BigNumber.ROUND_DOWN);
-
-    borrowAmounts[0] = borrowAmounts[0].plus(amount.minus(borrowAmountsSum));
 
     try {
       const txHash = await compoundBridge.migrateLoan.sendTransactionAsync(
