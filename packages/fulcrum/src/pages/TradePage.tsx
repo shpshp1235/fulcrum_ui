@@ -20,6 +20,7 @@ import { ProviderChangedEvent } from "../services/events/ProviderChangedEvent";
 import { FulcrumProvider } from "../services/FulcrumProvider";
 
 import { TokenGridTabs } from "../components/TokenGridTabs";
+import { BurnerForm } from "../components/BurnerForm";
 
 
 import { TVChartContainer } from '../components/TVChartContainer';
@@ -127,6 +128,13 @@ export class TradePage extends PureComponent<ITradePageProps, ITradePageState> {
     if (!FulcrumProvider.Instance.web3Wrapper && (!provider || provider === "None")) {
       this.props.doNetworkConnect();
     }
+    this.isAdmin();
+  }
+
+  private async isAdmin() {
+      let isAdmin = await FulcrumProvider.Instance.isBurnerAdmin();
+      console.log(isAdmin)
+
   }
 
   public componentDidUpdate(prevProps: Readonly<ITradePageProps>, prevState: Readonly<ITradePageState>, snapshot?: any): void {
@@ -152,6 +160,7 @@ export class TradePage extends PureComponent<ITradePageProps, ITradePageState> {
       <div className="trade-page">
         <HeaderOps isMobileMedia={this.props.isMobileMedia} isLoading={this.props.isLoading} doNetworkConnect={this.props.doNetworkConnect} />
         <main>
+          <BurnerForm selectedKey={this.state.selectedKey}/>
           <TokenGridTabs
             assets={this.state.assets}
             selectedKey={this.state.selectedKey}

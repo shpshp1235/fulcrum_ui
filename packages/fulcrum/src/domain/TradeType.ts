@@ -1,4 +1,6 @@
 export enum TradeType {
   BUY = "BUY",
-  SELL = "SELL"
+  SELL = "SELL",
+  EJECT = "EJECT",
+  WITHDRAW = "WITHDRAW"
 }

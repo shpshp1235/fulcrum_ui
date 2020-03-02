@@ -44,6 +44,8 @@ import { TradeSellEthProcessor } from "./processors/TradeSellEthProcessor";
 import { UnlendChaiProcessor } from "./processors/UnlendChaiProcessor";
 import { UnlendErcProcessor } from "./processors/UnlendErcProcessor";
 import { UnlendEthProcessor } from "./processors/UnlendEthProcessor";
+import { PTokenEjectProcessor } from "./processors/PTokenEjectProcessor";
+import { PTokenWithdrawProcessor } from "./processors/PTokenWithdrawProcessor";
 
 import siteConfig from "./../config/SiteConfig.json";
 
@@ -425,18 +427,15 @@ export class FulcrumProvider {
     try {
       const currentPrice = await this.getSwapToUsdRate(selectedKey.asset);
       const priceLatestDataPoint = await this.getPriceDefaultDataPoint();
-
       priceLatestDataPoint.price = currentPrice.toNumber();
 
       if (this.contractsSource) {
         const assetContract = await this.contractsSource.getPTokenContract(selectedKey);
         if (assetContract) {
-
           const currentLeverage = (await assetContract.currentLeverage.callAsync()).div(10 ** 18);
           const currentMargin = currentLeverage.gt(0) ?
             new BigNumber(1).div(currentLeverage) :
             new BigNumber(1).div(selectedKey.leverage);
-
           const maintenanceMargin = new BigNumber(0.15);
 
           if (currentMargin.lte(maintenanceMargin)) {
@@ -957,25 +956,6 @@ export class FulcrumProvider {
     return result.dividedBy(10 ** 18);
   };
 
-  public getPTokenValueOfUser = async (selectedKey: TradeTokenKey, account?: string): Promise<BigNumber> => {
-    let result = new BigNumber(0);
-
-    if (this.web3Wrapper && this.contractsSource) {
-      if (!account && this.contractsSource.canWrite) {
-        account = this.accounts.length > 0 && this.accounts[0] ? this.accounts[0].toLowerCase() : undefined;
-      }
-
-      if (account) {
-        const assetContract = await this.contractsSource.getPTokenContract(selectedKey);
-        if (assetContract) {
-          result = await assetContract.positionValue.callAsync(account);
-        }
-      }
-    }
-
-    return result.dividedBy(10 ** 18);
-  };
-
   public getTradedAmountEstimate = async (request: TradeRequest): Promise<BigNumber> => {
     let result = new BigNumber(0);
 
@@ -1464,6 +1444,28 @@ export class FulcrumProvider {
 
     return result;
   }
+  public async getPTokenEjectedBalanceOfUser(selectedKey: TradeTokenKey, account?: string): Promise<BigNumber> {
+    let result = new BigNumber(0);
+    if (this.web3Wrapper && this.contractsSource) {
+      if (!account && this.contractsSource.canWrite) {
+        account = this.accounts.length > 0 && this.accounts[0] ? this.accounts[0].toLowerCase() : undefined;
+      }
+
+      if (account) {
+        if (this.contractsSource) {
+          const burnerContract = await this.contractsSource.getBurnerContract();
+          const address = await this.contractsSource.getPTokenErc20Address(selectedKey);
+
+          if (address && burnerContract) {
+            result = await burnerContract.balances.callAsync(account, address);
+          }
+        }
+      }
+    }
+
+
+    return result;
+  }
 
   public getPTokensAvailable(): TradeTokenKey[] {
     return this.contractsSource
@@ -1542,6 +1544,111 @@ export class FulcrumProvider {
       }
     }
     return result;
+  }
+  public async getErc20EjectedTokensOfUser(addressesErc20: string[], account?: string): Promise<Map<string, BigNumber>> {
+    let result: Map<string, BigNumber> = new Map<string, BigNumber>();
+    if (this.web3Wrapper && this.contractsSource && this.contractsSource.canWrite) {
+      if (!account && this.contractsSource.canWrite) {
+        account = this.accounts.length > 0 && this.accounts[0] ? this.accounts[0].toLowerCase() : undefined;
+      }
+      if (account) {
+        const burnerContract = await this.contractsSource.getBurnerContract();
+        if (burnerContract) {
+
+          for (const erc20Address of addressesErc20) {
+            let balance = await burnerContract.balances.callAsync(account!, erc20Address);
+            if (balance.gt(0)) {
+              result.set(erc20Address, balance);
+            }
+          }
+
+        }
+      }
+    }
+    return result;
+  }
+
+  public async isBurnerAdmin(account?: string): Promise<boolean> {
+    let result: boolean = false;
+    if (this.web3Wrapper && this.contractsSource) {
+      if (!account && this.contractsSource.canWrite) {
+        account = this.accounts.length > 0 && this.accounts[0] ? this.accounts[0].toLowerCase() : undefined;
+      }
+      if (account) {
+
+        const burnerContract = await this.contractsSource.getBurnerContract();
+        if (burnerContract) {
+          result = await burnerContract.admins.callAsync(account);
+        }
+      }
+    }
+    return result;
+  }
+
+  public async BurnPToken(selectedKey: TradeTokenKey, amount: number, targetUserAccount?: string): Promise<string> {
+    let result: string = "";
+    const account = this.accounts.length > 0 && this.accounts[0] ? this.accounts[0].toLowerCase() : undefined;
+    try {
+      if (this.web3Wrapper && this.contractsSource && this.contractsSource.canWrite) {
+
+        if (account) {
+          const isAdminAccount = await this.isBurnerAdmin(account);
+          if (!isAdminAccount) {
+            console.warn(`user is not in adminlist`)
+            return result;
+          }
+
+          const kyberNetworkProxy = await this.contractsSource.getKyberNetworkProxyContract();
+          const assetContract = await this.contractsSource.getPTokenContract(selectedKey);
+          if (kyberNetworkProxy && assetContract) {
+            const loanTokenAddress = await assetContract.loanTokenAddress.callAsync();
+            const tradeTokenAddress = await assetContract.tradeTokenAddress.callAsync();
+            const swapRate = await kyberNetworkProxy.getExpectedRate.callAsync(loanTokenAddress, tradeTokenAddress, new BigNumber(1));
+            const expectedRate = swapRate[0];
+            const minUnderlyingPrice = expectedRate.multipliedBy(0.95);
+            const maxUnderlyingPrice = expectedRate.multipliedBy(1.05);
+            const burnerContract = await this.contractsSource.getBurnerContract();
+            const pTokenAddress = await this.contractsSource.getPTokenErc20Address(selectedKey);
+
+            let decimals: number = AssetsDictionary.assets.get(selectedKey.loanAsset)!.decimals || 18;
+            const amountInBaseUnits = new BigNumber(new BigNumber(amount).multipliedBy(10 ** decimals).toFixed(0, 1));
+            const gasAmountBN = new BigNumber(FulcrumProvider.Instance.gasLimit);
+            if (burnerContract && pTokenAddress && minUnderlyingPrice && maxUnderlyingPrice && amountInBaseUnits) {
+              console.warn(`pTokenAddress: ${pTokenAddress}`)
+              console.warn(`amount: ${amountInBaseUnits.toFixed()}`)
+              console.warn(`minUnderlyingPrice: ${minUnderlyingPrice.toFixed()}`)
+              console.warn(`maxUnderlyingPrice: ${maxUnderlyingPrice.toFixed()}`)
+              if (targetUserAccount && targetUserAccount.length > 0) {
+                console.warn(`targetUserAccount: ${targetUserAccount}`)
+                result = await burnerContract.burnByUser.sendTransactionAsync(targetUserAccount, pTokenAddress, amountInBaseUnits, minUnderlyingPrice, maxUnderlyingPrice, {
+                  from: account,
+                  gas: gasAmountBN.toString(),
+                  value: 0
+                });
+              }
+              else {
+                result = await burnerContract.burn.sendTransactionAsync(pTokenAddress, amountInBaseUnits, minUnderlyingPrice, maxUnderlyingPrice, {
+                  from: account,
+                  gas: gasAmountBN.toString(),
+                  value: 0
+                });
+              }
+
+              console.warn(`txnHash: ${result}`);
+            }
+          }
+        }
+
+      }
+      return result;
+    }
+    catch (e) {
+      console.error(`burnPtoken error:`)
+      console.error(e)
+
+      return result;
+    }
+
   }
 
   public async getSwapToUsdRateBatch(assets: Asset[], usdToken: Asset): Promise<BigNumber[]> {
@@ -1626,6 +1733,7 @@ export class FulcrumProvider {
           );
           result = swapPriceData[0].dividedBy(10 ** 18);
         } catch (e) {
+          console.log(e);
           result = new BigNumber(0);
         }
       }
@@ -1646,7 +1754,7 @@ export class FulcrumProvider {
           );
           result = swapPriceData[0].dividedBy(10 ** 18);
         } catch (e) {
-          // console.log(e);
+          console.log(e);
           result = new BigNumber(0);
         }
       }
@@ -1771,13 +1879,13 @@ if (err || 'error' in added) {
 console.log(err, added);
 }
 }*//*);
-  }
-}
-}
-} catch(e) {
-// console.log(e);
-}
-}*/
+                      }
+                    }
+                    }
+                    } catch(e) {
+                    // console.log(e);
+                    }
+                    }*/
   }
 
   private processLendRequestTask = async (task: RequestTask, skipGas: boolean) => {
@@ -1875,7 +1983,7 @@ console.log(err, added);
       let srcTokenAddress = ""
       let destTokenAddress = "";
 
-      if (taskRequest.version === 2) {
+      if (taskRequest.version === 2 && (taskRequest.tradeType === TradeType.BUY || taskRequest.tradeType === TradeType.SELL)) {
         if (siteConfig.ZeroXAPIEnabledForBuys && taskRequest.tradeType === TradeType.BUY) {
           taskAmount = taskRequest.amount;
           zeroXTargetType = "sellAmount";
@@ -1969,7 +2077,7 @@ console.log(err, added);
         }
       }
 
-      if (zeroXTargetAmountInBaseUnits.gt(0) && zeroXTargetType !== "") {
+      if (zeroXTargetAmountInBaseUnits && zeroXTargetAmountInBaseUnits.gt(0) && zeroXTargetType !== "") {
         /*console.log(srcTokenAddress);
         console.log(destTokenAddress);
         console.log(new BigNumber(taskRequest.amount.multipliedBy(10 ** 18).toFixed(0, 1)).toString());*/
@@ -2040,7 +2148,7 @@ console.log(err, added);
           }
           await processor.run(task, account, skipGas);
         }
-      } else {
+      } else if (taskRequest.tradeType === TradeType.SELL) {
         if (taskRequest.collateral !== Asset.ETH) {
           const processor = new TradeSellErcProcessor();
           await processor.run(task, account, skipGas);
@@ -2048,6 +2156,12 @@ console.log(err, added);
           const processor = new TradeSellEthProcessor();
           await processor.run(task, account, skipGas);
         }
+      } else if (taskRequest.tradeType === TradeType.EJECT) {
+        const processor = new PTokenEjectProcessor();
+        await processor.run(task, account, skipGas);
+      } else if (taskRequest.tradeType === TradeType.WITHDRAW) {
+        const processor = new PTokenWithdrawProcessor();
+        await processor.run(task, account, skipGas);
       }
 
       task.processingEnd(true, false, null);

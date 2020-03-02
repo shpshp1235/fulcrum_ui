@@ -127,6 +127,23 @@ export class OwnTokenGrid extends Component<IOwnTokenGridProps, IOwnTokenGridSta
       )
     );
   };
+  public onEjectClick = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+
+    this.props.onTrade(
+      new TradeRequest(
+        TradeType.EJECT,
+        this.props.selectedKey.asset,
+        this.props.selectedKey.unitOfAccount,
+        this.props.selectedKey.positionType === PositionType.SHORT ? this.props.selectedKey.asset : Asset.USDC,
+        this.props.selectedKey.positionType,
+        this.props.selectedKey.leverage,
+        new BigNumber(0),
+        this.props.selectedKey.isTokenized,
+        this.props.selectedKey.version
+      )
+    );
+  };
 
   private static getRowsData = async (props: IOwnTokenGridProps): Promise<IOwnTokenGridRowProps[]> => {
     const rowsData: IOwnTokenGridRowProps[] = [];
@@ -137,6 +154,7 @@ export class OwnTokenGrid extends Component<IOwnTokenGridProps, IOwnTokenGridSta
         : FulcrumProvider.Instance.getPTokensAvailable()
 
       const pTokenAddreses: string[] = FulcrumProvider.Instance.getPTokenErc20AddressList();
+      const pTokenEjectedBalances = await FulcrumProvider.Instance.getErc20EjectedTokensOfUser(pTokenAddreses);
       const pTokenBalances = await FulcrumProvider.Instance.getErc20BalancesOfUser(pTokenAddreses);
       for (const pToken of pTokens) {
         // console.log(pToken);
@@ -153,7 +171,28 @@ export class OwnTokenGrid extends Component<IOwnTokenGridProps, IOwnTokenGridSta
           // onManageCollateral: props.onManageCollateral,
           onSelect: props.onSelect,
           onTrade: props.onTrade,
-          showMyTokensOnly: props.showMyTokensOnly
+          showMyTokensOnly: props.showMyTokensOnly,
+          isEjected: false
+        });
+      }
+      
+      for (const pToken of pTokens) {
+        // console.log(pToken);
+        const balance = pTokenEjectedBalances.get(pToken.erc20Address);
+        if (!balance) {
+          continue;
+        }
+
+        rowsData.push({
+          selectedKey: props.selectedKey,
+          currentKey: pToken,
+          // // balance: balance,
+          // onDetails: props.onDetails,
+          // onManageCollateral: props.onManageCollateral,
+          onSelect: props.onSelect,
+          onTrade: props.onTrade,
+          showMyTokensOnly: props.showMyTokensOnly,
+          isEjected: true
         });
       }
     }
