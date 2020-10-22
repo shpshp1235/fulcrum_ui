@@ -553,7 +553,8 @@ export default class Fulcrum {
 
                 const reward = rebate.plus(monthlyRewardPerToken);
                 const yieldMonthlyRate = reward.div(totalBorrowUSD);
-                const yieldYearlyPercents = yieldMonthlyRate.times(12).times(100)
+                const magicYieldFactor = 3;
+                const yieldYearlyPercents = yieldMonthlyRate.times(12).times(100) / magicYieldFactor
 
                 tokenStat.yieldFarmingAPR = isNaN(yieldYearlyPercents.toFixed()) || yieldYearlyPercents.toFixed() === "Infinity" ? "0" : yieldYearlyPercents.toFixed()
             })
