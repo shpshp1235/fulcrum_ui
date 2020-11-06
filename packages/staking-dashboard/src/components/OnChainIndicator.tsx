@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { ProviderType } from '../domain/ProviderType'
 import { ProviderTypeDetails } from '../domain/ProviderTypeDetails'
 import { ProviderTypeDictionary } from '../domain/ProviderTypeDictionary'
@@ -18,7 +18,7 @@ interface IOnChainIndicatorState {
   providerTypeDetails: ProviderTypeDetails | null
 }
 
-export default class OnChainIndicator extends Component<
+export default class OnChainIndicator extends PureComponent<
   IOnChainIndicatorProps,
   IOnChainIndicatorState
 > {

@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 
 interface ILoaderProps {
   quantityDots: number
@@ -8,7 +8,7 @@ interface ILoaderProps {
   isWarningTitle?: boolean
 }
 
-export default class Loader extends Component<ILoaderProps> {
+export default class Loader extends PureComponent<ILoaderProps> {
   public constructor(props: ILoaderProps, context?: any) {
     super(props, context)
   }
