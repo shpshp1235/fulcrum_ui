@@ -73,16 +73,16 @@ export class Form extends Component<{}, IFormState> {
     }
 
     this._isMounted = false
-    stakingProvider.eventEmitter.on(
+    stakingProvider.on(
       StakingProviderEvents.ProviderAvailable,
       this.onProviderAvailable
     )
-    stakingProvider.eventEmitter.on(StakingProviderEvents.ProviderChanged, this.onProviderChanged)
-    stakingProvider.eventEmitter.on(
+    stakingProvider.on(StakingProviderEvents.ProviderChanged, this.onProviderChanged)
+    stakingProvider.on(
       StakingProviderEvents.AskToOpenProgressDlg,
       this.onAskToOpenProgressDlg
     )
-    stakingProvider.eventEmitter.on(
+    stakingProvider.on(
       StakingProviderEvents.AskToCloseProgressDlg,
       this.onAskToCloseProgressDlg
     )
@@ -189,16 +189,16 @@ export class Form extends Component<{}, IFormState> {
   public componentWillUnmount(): void {
     this._isMounted = false
 
-    stakingProvider.eventEmitter.off(
+    stakingProvider.off(
       StakingProviderEvents.ProviderAvailable,
       this.onProviderAvailable
     )
-    stakingProvider.eventEmitter.off(StakingProviderEvents.ProviderChanged, this.onProviderChanged)
-    stakingProvider.eventEmitter.off(
+    stakingProvider.off(StakingProviderEvents.ProviderChanged, this.onProviderChanged)
+    stakingProvider.off(
       StakingProviderEvents.AskToOpenProgressDlg,
       this.onAskToOpenProgressDlg
     )
-    stakingProvider.eventEmitter.off(
+    stakingProvider.off(
       StakingProviderEvents.AskToCloseProgressDlg,
       this.onAskToCloseProgressDlg
     )
